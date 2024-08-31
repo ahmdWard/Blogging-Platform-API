@@ -2,6 +2,7 @@ const express=require('express')
 const AppError= require('./utils/appError')
 const morgan = require('morgan');
 const blogRouter= require('./routers/blogRoutes')
+const globalErrorHandler = require('./controllers/errorController');
 const app= express()
 
 
@@ -19,5 +20,7 @@ app.use('/api/v1/blogs',blogRouter)
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
   });
+
+app.use(globalErrorHandler)
 
 module.exports=app
