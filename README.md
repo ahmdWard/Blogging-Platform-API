@@ -4,6 +4,8 @@
 
 This is a blogging platform API implemented using PostgreSQL. It supports CRUD operations for blog posts and allows for searching and filtering based on various criteria.
 
+From [roadmap.sh](https://roadmap.sh/projects/blogging-platform-api)
+
 ## Endpoints
 
 ### `GET /blogs`
@@ -62,7 +64,7 @@ blogs
 
 ```bash
 
-git clone <repository-url>
+git clone <https://github.com/ahmdWard/Blogging-Platform-API.git >
 git checkout postgres
 ```
 **Install dependencies:**
