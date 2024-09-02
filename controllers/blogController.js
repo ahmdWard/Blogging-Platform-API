@@ -37,11 +37,25 @@ exports.createBlog= catchAsync(async(req,res,next)=>{
 
 
 exports.getAllBlogs= catchAsync(async(req,res,next)=>{
- 
-    const blogs = await Blog.find()
 
-    if(!blogs)
-         return next(new AppError('there is no blogs'))
+    const searchTerm = req.query.term;
+
+    let filter = {};
+    if (searchTerm) {
+        filter = {
+            $or: [
+                { title: { $regex: searchTerm, $options: 'i' } },
+                { content: { $regex: searchTerm, $options: 'i' } },
+                {tags: { $in: [searchTerm] }},
+                {category:{$regex:searchTerm , $options :'i'}} 
+            ]
+        };
+    }
+ 
+    const blogs = await Blog.find(filter)
+
+    if(!blogs||blogs.length===0)
+        return next(new AppError('there is no blogs'))
 
     res.status(200).json({
         status:"sucess",
@@ -71,6 +85,8 @@ exports.updateBlog=catchAsync(async(req,res,next)=>{
 exports.deleteBlog=catchAsync(async(req,res,next)=>{
  
    const blog = await Blog.findByIdAndDelete(req.params.id)
+   
+
     
     res.status(204).json({
         status:"sucess",
