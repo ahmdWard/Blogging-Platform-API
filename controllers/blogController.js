@@ -23,9 +23,7 @@ exports.getBlog= catchAsync(async(req,res,next)=> {
 exports.createBlog= catchAsync(async (req,res,next)=>{
  
    const {title, content , category ,tags}=req.body
-   console.log(title, content,category,tags, tagsArray)
   
-
     const result = await client.query(' insert into blogs (title , content ,category , tags) values($1 , $2 , $3 , $4 )RETURNING *',
     [title,content,category,tags]
    ) 
