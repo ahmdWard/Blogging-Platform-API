@@ -41,9 +41,21 @@ exports.createBlog= catchAsync(async (req,res,next)=>{
 
 exports.getAllBlogs= catchAsync(async (req,res,next)=>{
 
-        const result = await client.query('select * from blogs')
-        const blogs= result.rows
-        console.log(blogs)
+        const searchTerm = req.query.term;
+        let query = 'SELECT * FROM blogs';
+        let params= []
+
+        if (searchTerm) {
+            query += ' WHERE';
+            query += ' (title ILIKE $1 OR content ILIKE $1 OR category ILIKE $1)';
+            params.push(`${searchTerm}`); 
+        }
+        const result = await client.query(query, params);
+        const blogs = result.rows;
+    
+        if (!blogs || blogs.length === 0) {
+            return next(new AppError('No blogs found matching the criteria', 404));
+        }
         res.status(200).json({
             status:"sucess",
             data:{
@@ -62,7 +74,7 @@ exports.updateBlog= catchAsync(async (req,res,next)=>{
       const values= Object.values(updates)
 
       if(!keys.length)
-        return next(new AppError('No fields to update', 400))
+        return next(new AppError('No fields to update', 404))
 
     const setClause= Object.keys(updates).map((key,index)=>`${key}=$${index+1}`).join(',')
 
@@ -90,7 +102,7 @@ exports.deleteBlog=catchAsync(async (req,res,next)=>{
             'delete from blogs where id = $1 RETURNING *',[req.params.id]
         )
         if(!result.rows.length)
-           return next(new AppError('this id is not found'),400)
+           return next(new AppError('this id is not found'),404)
       res.status(204).json({
         status:"sucess",
         data:null
