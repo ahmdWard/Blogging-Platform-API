@@ -58,6 +58,7 @@ exports.getAllBlogs= catchAsync(async (req,res,next)=>{
         }
         res.status(200).json({
             status:"sucess",
+            length:blogs.length,
             data:{
                 blogs 
             }
